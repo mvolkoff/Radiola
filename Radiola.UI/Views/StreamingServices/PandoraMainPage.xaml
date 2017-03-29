@@ -1,0 +1,127 @@
+﻿<Page
+    x:Class="Radiola.UI.Views.StreamingServices.PandoraMainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Radiola.UI.ViewModels"
+    xmlns:controls="using:Radiola.UI.Controls"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:sfNotifications="using:Syncfusion.UI.Xaml.Controls.Notification"
+    mc:Ignorable="d"
+    DataContext="{Binding PandoraMain, Source={StaticResource Locator}}">
+
+    <Page.Resources>
+        <!-- Collection of user stations displayed by this page -->
+        <CollectionViewSource x:Name="userStationsSource" Source="{Binding UserStations}"/>
+
+        <!-- Collection of genre stations displayed by this page -->
+        <CollectionViewSource x:Name="genreStationsSource" Source="{Binding GenreStations}"/>
+
+        <DataTemplate x:Name="userStationItemTemplate" x:DataType="vm:UserStationItem">
+            <Grid>
+                <Image Source="{Binding ArtUrl}"/>
+                <Border Background="{StaticResource PageBackgroundBrush}" VerticalAlignment="Bottom" Opacity=".75" >
+                    <TextBlock Text="{Binding Name}"
+                               Foreground="{StaticResource PageForegroundBrush}"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"/>
+                </Border>
+                <i:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding NavigateToStationDetailsCommand}" CommandParameter="{Binding StationToken}"/>
+                    </core:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="genreHeaderTemplate" x:DataType="vm:GenreItem">
+            <TextBlock Text="{Binding Name}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="genreStationItemTemplate" x:DataType="vm:GenreItem">
+            <GridView ItemsSource="{Binding Stations}">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:GenreStationItem">
+                        <Grid>
+                            <Image Source="{Binding ArtUrl}" Width="150" Height="150" Stretch="Uniform"/>
+                            <Border Background="{StaticResource PageBackgroundBrush}" VerticalAlignment="Bottom" Opacity=".75" >
+                                <TextBlock Text="{Binding Name}"
+                                           Foreground="{StaticResource PageForegroundBrush}"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!--Header-->
+        <Grid Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Header}"
+                       Foreground="{StaticResource PageForegroundBrush}"
+                       Margin="24"
+                       FontSize="48"
+                       Grid.Column="0"/>
+            <Path Data="{Binding ConnectionIcon}"
+                  Fill="{StaticResource PageForegroundBrush}"
+                  Height="96"
+                  Width="96"
+                  Margin="24"
+                  Stretch="Uniform"
+                  Grid.Column="1"/>
+        </Grid>
+
+        <!--Stations-->
+        <Grid Background="Transparent" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Create new station command-->
+            <AutoSuggestBox PlaceholderText="Create Station" QueryIcon="Find" Width="600" HorizontalAlignment="Center" Margin="8"/>
+
+            <!--User stations-->
+            <Grid Background="Transparent" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <controls:CoverFlow x:Name="userStationsFlow" Height="150"
+                                    Margin="8"
+                                    ItemTemplate="{StaticResource userStationItemTemplate}"
+                                    ItemsSource="{Binding UserStations}">
+                </controls:CoverFlow>
+                <controls:CoverFlowIndicator CoverFlow="{Binding ElementName=userStationsFlow}"
+                                             VerticalAlignment="Bottom"
+                                             HorizontalAlignment="Center"
+                                             Margin="8" Grid.Row="1"/>
+            </Grid>
+
+            <!--Genre stations-->
+            <Pivot x:Name="rootPivot"
+                   ItemsSource="{Binding Genres}"
+                   HeaderTemplate="{StaticResource genreHeaderTemplate}"
+                   ItemTemplate="{StaticResource genreStationItemTemplate}"
+                   Grid.Row="2" />
+        </Grid>
+
+        <sfNotifications:SfBusyIndicator Header="{Binding BusyMessage}" AnimationType="DoubleCircle"  IsBusy="{Binding IsBusy}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1"/>
+
+    </Grid>
+</Page>

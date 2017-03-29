@@ -1,0 +1,227 @@
+﻿<common:BindablePage
+    x:Class="Radiola.UI.Views.StreamingServices.PandoraStationDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Radiola.UI.Views.StreamingServices"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="using:Radiola.UI.Common"
+    xmlns:uwptoolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:Radiola.UI.Controls"
+    xmlns:pandora="using:Radiola.Services.Pandora"
+    mc:Ignorable="d"
+    DataContext="{Binding PandoraStationDetails, Source={StaticResource Locator}}">
+
+    <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+
+        <!--Header-->
+        <Grid>
+            <uwptoolkit:ImageEx IsCacheEnabled="True"
+                                Source="{Binding ArtUrl}"
+                                Stretch="UniformToFill"
+                                PlaceholderStretch="UniformToFill"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Opacity=".5"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Header}"
+                           Foreground="{StaticResource PageForegroundBrush}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           FontSize="36"
+                           FontWeight="SemiBold"
+                           Grid.Row="1"/>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5">
+                    <TextBlock Foreground="{StaticResource PageForegroundBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Margin="5">
+                        <Run Text="Created: "/>
+                        <Run Text="{Binding DateCreated}"/>
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Path Data="{StaticResource ThumbUpIcon}"
+                              Fill="{StaticResource PageForegroundBrush}"
+                              Height="32"
+                              Width="32"
+                              Stretch="Uniform" />
+                        <TextBlock Text="{Binding TotalThumbsUp}"
+                                   Foreground="{StaticResource PageForegroundBrush}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="5"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Path Data="{StaticResource ThumbDownIcon}"
+                              Fill="{StaticResource PageForegroundBrush}"
+                              Height="32"
+                              Width="32"
+                              Stretch="Uniform" />
+                        <TextBlock Text="{Binding TotalThumbsDown}"
+                                   Foreground="{StaticResource PageForegroundBrush}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="5"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Style="{StaticResource CircleButtonStyle}"
+                        Command="{Binding PlayStationCommand}"
+                        CommandParameter="{Binding StationToken}"
+                        Width="64"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Margin="10">
+                    <Path Data="{StaticResource PlayIcon}"
+                          Fill="{StaticResource PageBackgroundBrush}"
+                          Height="32"
+                          Width="32"
+                          Stretch="Uniform"/>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <!--Station seed-->
+            <Grid Margin="5">
+                <TextBlock Text="Station Created From"
+                           Foreground="{StaticResource PageForegroundBrush}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <!--Add variety command-->
+                <AutoSuggestBox PlaceholderText="Add variety" QueryIcon="Find" Width="200" HorizontalAlignment="Right" Margin="5"/>
+            </Grid>
+            <controls:VariableGridView ItemsSource="{Binding StationArtists}" Grid.Row="1">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid ItemHeight="120" ItemWidth="320" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="pandora:IArtistInfo">
+                        <Border Background="{StaticResource PageForegroundBrush}" Height="100" Width="300" CornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Height="80" Width="80">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding ArtUrl}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Text="{Binding ArtistName}"
+                                       Foreground="{StaticResource PageBackgroundBrush}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Margin="10"
+                                       Grid.Column="1"/>
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" Grid.Column="1">
+                                    <Path Data="{StaticResource CloseIcon}"
+                                          Fill="{StaticResource PageBackgroundBrush}"
+                                          Height="16"
+                                          Width="16"
+                                          Stretch="Uniform"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </controls:VariableGridView>
+
+            <!--Thumb history-->
+            <Grid Margin="5" Grid.Column="1">
+                <TextBlock Text="Thumb History"
+                           Foreground="{StaticResource PageForegroundBrush}"
+                           FontSize="24"
+                           FontWeight="SemiBold"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!--ThumbsUp-->
+                    <Button Command="{Binding FilterThumbsUpCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5">
+                        <Path Data="{StaticResource ThumbUpIcon}"
+                              Fill="{StaticResource PageBackgroundBrush}"
+                              Height="16"
+                              Width="16"
+                              Stretch="Uniform"/>
+                    </Button>
+
+                    <!--ThumbsDown-->
+                    <Button Command="{Binding FilterThumbsDownCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5">
+                        <Path Data="{StaticResource ThumbDownIcon}"
+                              Fill="{StaticResource PageBackgroundBrush}"
+                              Height="16"
+                              Width="16"
+                              Stretch="Uniform"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <controls:VariableGridView ItemsSource="{Binding ThumbsHistory}" Grid.Row="1" Grid.Column="1">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VariableSizedWrapGrid ItemHeight="120" ItemWidth="320" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="pandora:ITrack">
+                        <Border Background="{StaticResource PageForegroundBrush}" Height="100" Width="300" CornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Height="80" Width="80">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding AlbumArtUrl}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Foreground="{StaticResource PageBackgroundBrush}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Margin="10"
+                                           Grid.Column="1">
+                                    <Run Text="{Binding ArtistName}"/>
+                                    <Run Text=" - "/>
+                                    <Run Text="{Binding SongName}"/>
+                                </TextBlock>
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" Grid.Column="1">
+                                    <Path Data="{StaticResource CloseIcon}"
+                                          Fill="{StaticResource PageBackgroundBrush}"
+                                          Height="16"
+                                          Width="16"
+                                          Stretch="Uniform"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </controls:VariableGridView>
+        </Grid>
+    </Grid>
+</common:BindablePage>
