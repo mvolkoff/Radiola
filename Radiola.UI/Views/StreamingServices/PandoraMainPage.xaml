@@ -94,7 +94,13 @@
             </Grid.RowDefinitions>
 
             <!--Create new station command-->
-            <AutoSuggestBox PlaceholderText="Create Station" QueryIcon="Find" Width="600" HorizontalAlignment="Center" Margin="8"/>
+            <AutoSuggestBox x:Name="searchBox" PlaceholderText="Create Station" QueryIcon="Find" Width="600" HorizontalAlignment="Center" Margin="8">
+                <i:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="TextChanged">
+                        <core:InvokeCommandAction Command="{Binding SearchCommand}" CommandParameter="{Binding Text, ElementName=searchBox}"/>
+                    </core:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </AutoSuggestBox>
 
             <!--User stations-->
             <Grid Background="Transparent" Grid.Row="1">

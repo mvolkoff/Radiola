@@ -12,4 +12,10 @@ namespace Radiola.Services.Pandora.Common
         MediumQuality,
         LowQuality
     }
+
+    public enum MusicType
+    {
+        Song,
+        Artist
+    }
 }

@@ -78,11 +78,15 @@ namespace Radiola.UI.ViewModels.StreamingServices
             set { Set(ref _genres, value); }
         }
 
+        public RelayCommand<string> SearchCommand { get; private set; }
+
         public PandoraMainViewModel(INavigationServiceEx navigationService, IPandoraService pandoraService, IDialogService dialogService)
         {
             _navigationService = navigationService;
             _pandoraService = pandoraService;
             _dialogService = dialogService;
+
+            SearchCommand = new RelayCommand<string>((searchText) => Search(searchText));
 
             Messenger.Default.Register<AwaitableOperationMessage>(this, (args) =>
             {
@@ -142,6 +146,11 @@ namespace Radiola.UI.ViewModels.StreamingServices
                                                                  });
                 }
             }
+        }
+
+        private void Search(string searchText)
+        {
+            var result = _pandoraService.SearchAsync(searchText);
         }
         #endregion
     }

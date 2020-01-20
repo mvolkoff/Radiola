@@ -67,7 +67,21 @@ namespace Radiola.Services.Pandora.Factories
                     }
                 case MethodNames.music_search:
                     {
-                        throw new NotImplementedException();
+                        string searchText = string.Empty;
+
+                        if (requiredInfo == null)
+                            throw new ArgumentNullException();
+
+                        var texts = from text
+                                    in additionalInfo
+                                    where text.Key.Equals("searchText")
+                                    select text;
+                        if (texts.Count() == 0)
+                            throw new ArgumentException("Parameter searchText not found");
+                        else
+                            searchText = texts.FirstOrDefault().Value.ToString();
+
+                        return JsonConvert.SerializeObject(new SearchMusic(requiredInfo.AuthToken, requiredInfo.SyncTime, searchText));
                     }
                 case MethodNames.station_addFeedback:
                     {
@@ -186,7 +200,10 @@ namespace Radiola.Services.Pandora.Factories
                     }
                 case MethodNames.user_getStationListChecksum:
                     {
-                        throw new NotImplementedException();
+                        if (requiredInfo == null)
+                            throw new ArgumentNullException();
+
+                        return JsonConvert.SerializeObject(new GetStationListChecksum(requiredInfo.AuthToken, requiredInfo.SyncTime));
                     }
                 case MethodNames.user_getStationList:
                     {
